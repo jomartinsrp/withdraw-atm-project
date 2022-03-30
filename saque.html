@@ -1,0 +1,68 @@
+<html>
+
+<head>
+
+    <meta charset="utf-8"/>
+
+    <style>
+        .btn{
+            margin-left: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+    
+    <h2> Olá, digite o valor que deseja sacar: </h2>
+
+    <p>Digite o valor no campo abaixo</p>
+
+    <input class='querSacar' type='number'>
+
+    <button class="btn" onclick='clicar()'>Sacar Dinheiro</button>
+
+    <p id="valores"></p>
+
+</body>
+
+<script>
+    // Cédulas disponíveis no dispenser
+
+    let dispenser = { 100: 99999, 50: 99999, 10: 99999, 5: 99999, 1: 99999 }
+
+    // Função para sacar dinheiro do dispenser
+
+    function sacarDinheiro(valorDoSaque, dispenser) {
+        let saque = (valorDoSaque, notas) => {
+            if (valorDoSaque <= 0) {
+                return {};
+            }
+            let nota = notas[0]
+            let contador = Math.min(dispenser[nota], Math.floor(valorDoSaque / nota));
+            for (let i = contador; i >= 0; i--) {
+                let resultado = saque(valorDoSaque - i * nota, notas.slice(1));
+                if (resultado) return i ? { [nota]: i, ...resultado } : resultado;
+            }
+            if (!notas.length) {
+                return;
+            }
+        }
+        return saque(valorDoSaque, Object.keys(dispenser).map(Number).sort((a, b) => b - a));
+    };
+
+    // Função clicar para sacar o dinheiro
+
+    function clicar() {
+        var valorDoSaque = document.querySelector('.querSacar').value
+        var resultado = sacarDinheiro(valorDoSaque, dispenser);
+        var texto = ""
+        for (const [chave, valor] of Object.entries(resultado)) {
+            texto += " Você recebeu " + valor + " notas de " + chave + "<br>"
+        }
+        document.getElementById("valores").innerHTML = texto
+    };
+
+</script>
+
+</html>
